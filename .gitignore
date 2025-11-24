@@ -55,8 +55,9 @@ Thumbs.db
 # Virtual machine crash logs
 hs_err_pid*
 
-# Database files (if you don't want to commit them)
-*.db
+# Database files
+# Note: user.db contains registered users, should be committed
+# *.db
 
 # Chat history (local data, should not be committed)
 chat_history/
