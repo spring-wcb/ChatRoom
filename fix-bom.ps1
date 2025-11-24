@@ -37,4 +37,3 @@ if ($fixedCount -gt 0) {
 } else {
     Write-Host "没有发现 BOM，所有文件正常！" -ForegroundColor Green
 }
-

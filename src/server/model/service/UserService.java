@@ -79,10 +79,33 @@ public class UserService {
                             DataBuffer.configProp.getProperty("dbpath")));
 
             list = (List<User>)ois.readObject();
+        } catch (java.io.FileNotFoundException e) {
+            // Database file doesn't exist yet, initialize with default users
+            System.out.println("user.db not found, creating with default users...");
+            initUser();
+            // Try loading again after initialization
+            ObjectInputStream ois2 = null;
+            try {
+                ois2 = new ObjectInputStream(
+                        new FileInputStream(
+                                DataBuffer.configProp.getProperty("dbpath")));
+                list = (List<User>)ois2.readObject();
+            } catch (Exception ex) {
+                System.err.println("Failed to load users after initialization: " + ex.getMessage());
+                list = new CopyOnWriteArrayList<>();
+            } finally {
+                IOUtil.close(ois2);
+            }
         } catch (Exception e) {
+            System.err.println("Error loading users: " + e.getMessage());
             e.printStackTrace();
+            list = new CopyOnWriteArrayList<>();
         }finally{
             IOUtil.close(ois);
+        }
+        // Ensure we never return null
+        if (list == null) {
+            list = new CopyOnWriteArrayList<>();
         }
         return list;
     }
