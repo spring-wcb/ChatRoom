@@ -357,11 +357,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **South China University of Technology (SCUT)**
 - Java Course Project
-- Academic Year: 2024-2025
+- Academic Year: 2025-2026
 
 ## 🙏 Acknowledgments
 
-- UI Design inspired by WhatsApp Web
 - Icons and emoji support from Unicode Standard
 - SQLite for lightweight database solution
 - Gson for elegant JSON handling
@@ -373,11 +372,6 @@ For more detailed documentation, see:
 - **API Reference**: [API.md](docs/API.md) (if created)
 - **User Manual**: [USER_GUIDE.md](docs/USER_GUIDE.md) (if created)
 
-## 🔗 Links
-
-- **GitHub Repository**: [SpringChat](https://github.com/yourusername/SpringChat)
-- **Issue Tracker**: [Report Bugs](https://github.com/yourusername/SpringChat/issues)
-- **Project Wiki**: [Documentation](https://github.com/yourusername/SpringChat/wiki)
 
 ---
 
