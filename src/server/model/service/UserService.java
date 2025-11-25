@@ -33,15 +33,44 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class UserService {
     private static int idCount = 3; //id
 
+    /** 检查账号是否存在 */
+    public boolean isAccountExists(String account){
+        List<User> users = loadAllUser();
+        for (User user : users) {
+            if(account.equals(user.getAccount())){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** 新增用户 */
-    public void addUser(User user){
+    public boolean addUser(User user){
+        // Check if account already exists
+        if(isAccountExists(user.getAccount())){
+            return false;
+        }
         user.setId(++idCount);
         List<User> users = loadAllUser();
         users.add(user);
         saveAllUser(users);
+        return true;
     }
 
-    /** 用户登录 */
+    /** 用户登录 (使用账号) */
+    public User login(String account, String password){
+        User result = null;
+        List<User> users = loadAllUser();
+        for (User user : users) {
+            if(account.equals(user.getAccount()) && password.equals(user.getPassword())){
+                result = user;
+                break;
+            }
+        }
+        return result;
+    }
+    
+    /** 用户登录 (使用ID - 保留以兼容旧代码) */
     public User login(long id, String password){
         User result = null;
         List<User> users = loadAllUser();
@@ -130,13 +159,13 @@ public class UserService {
 
     /** 初始化几个测试用户 */
     public void initUser(){
-        User user = new User("admin", "Admin", 'm', 0);
+        User user = new User("101", "123", "Admin", 'M', 0);
         user.setId(1);
 
-        User user2 = new User("123", "yong", 'm', 1);
+        User user2 = new User("102", "123", "yong", 'M', 1);
         user2.setId(2);
 
-        User user3 = new User("123", "anni", 'f', 2);
+        User user3 = new User("103", "123", "anni", 'F', 2);
         user3.setId(3);
 
         List<User> users = new CopyOnWriteArrayList<User>();

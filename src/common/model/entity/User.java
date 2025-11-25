@@ -25,12 +25,14 @@ import java.io.Serializable;
 public class User implements Serializable {
     private static final long serialVersionUID = 5942011574971970871L;
     private long id;
+    private String account;
     private String password;
     private String nickname;
     private int head;
     private char sex;
 
-    public User(String password, String nickname, char sex, int head){
+    public User(String account, String password, String nickname, char sex, int head){
+        this.account = account;
         this.password = password;
         this.sex = sex;
         this.head = head;
@@ -46,6 +48,11 @@ public class User implements Serializable {
         this.id = id;
         this.password = password;
     }
+    
+    public User(String account, String password){
+        this.account = account;
+        this.password = password;
+    }
 
     public long getId(){
         return  id;
@@ -53,6 +60,14 @@ public class User implements Serializable {
 
     public void setId(long id){
         this.id = id;
+    }
+
+    public String getAccount(){
+        return account;
+    }
+
+    public void setAccount(String account){
+        this.account = account;
     }
 
     public void setPassword(String password){
@@ -98,6 +113,7 @@ public class User implements Serializable {
         int result = 1;
         result = prime * result + head;
         result = prime * result + (int)(id ^ (id >> 32));
+        result = prime * result + ((account == null) ? 0 : account.hashCode());
         result = prime * result + ((nickname == null) ? 0 : nickname.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
         result = prime * result + sex;
@@ -114,6 +130,11 @@ public class User implements Serializable {
             return false;
         User other = (User) obj;
         if(head != other.head || id != other.id || sex != other.sex)
+            return false;
+        if(account == null){
+            if(other.account != null)
+                return false;
+        }else if(!account.equals(other.account))
             return false;
         if(nickname == null){
             if(other.nickname != null)
@@ -132,6 +153,7 @@ public class User implements Serializable {
     public String toString() {
         return this.getClass().getName()
                 + "[id=" + this.id
+                + ",account=" + this.account
                 + ",pwd=" + this.password
                 + ",nickname=" + this.nickname
                 + ",head=" + this.head

@@ -130,17 +130,9 @@ public class LoginFrame extends JFrame {
             return;
         }
 
-        if (!idTxt.getText().matches("^\\d*$")) {
-            JOptionPane.showMessageDialog(LoginFrame.this,
-                    "账号必须是数字",
-                    "输入有误", JOptionPane.ERROR_MESSAGE);
-            idTxt.requestFocusInWindow();
-            return;
-        }
-
         Request req = new Request();
         req.setAction("userLogin");
-        req.setAttribute("id", idTxt.getText());
+        req.setAttribute("account", idTxt.getText().trim());
         req.setAttribute("password", new String(pwdFld.getPassword()));
 
         // 获取响应

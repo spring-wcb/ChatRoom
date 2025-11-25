@@ -26,7 +26,7 @@ import java.util.List;
 public class OnlineUserTableModel extends AbstractTableModel {
     private static final long serialVersionUID = -444245379288364831L;
     /** Column titles */
-    private String[] title = {"ID", "Nickname", "Gender"};
+    private String[] title = {"ID", "Account", "Nickname", "Gender"};
     /** Data rows */
     private List<String[]> rows = new ArrayList<String[]>();
 

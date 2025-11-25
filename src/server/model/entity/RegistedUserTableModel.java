@@ -27,7 +27,7 @@ public class RegistedUserTableModel extends AbstractTableModel {
     private static final long serialVersionUID = -6299791067241594227L;
 
     // Column titles
-    private String[] title = {"ID", "Password", "Nickname", "Gender"};
+    private String[] title = {"ID", "Account", "Password", "Nickname", "Gender"};
     // Data rows
     private List<String[]> rows = new ArrayList<String[]>();
 

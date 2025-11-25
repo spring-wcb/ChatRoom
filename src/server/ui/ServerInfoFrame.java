@@ -258,6 +258,7 @@ public class ServerInfoFrame extends JFrame {
         for (User user : users) {
             DataBuffer.registedUserTableModel.add(new String[] {
                     String.valueOf(user.getId()),
+                    user.getAccount(),
                     user.getPassword(),
                     user.getNickname(),
                     String.valueOf(user.getSex())

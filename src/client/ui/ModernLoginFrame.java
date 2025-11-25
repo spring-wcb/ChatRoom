@@ -99,8 +99,8 @@ public class ModernLoginFrame extends JFrame {
         titleLabel.setBounds(40, 30, 320, 40);
         cardPanel.add(titleLabel);
 
-        // ID Field
-        JLabel idLabel = new JLabel("Account ID");
+        // Account Field
+        JLabel idLabel = new JLabel("Account");
         idLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
         idLabel.setForeground(primaryColor);
         idLabel.setBounds(40, 90, 320, 20);
@@ -177,22 +177,17 @@ public class ModernLoginFrame extends JFrame {
     }
 
     private void login() {
-        String id = idField.getText().trim();
+        String account = idField.getText().trim();
         String pwd = new String(pwdField.getPassword());
 
-        if (id.isEmpty() || pwd.isEmpty()) {
+        if (account.isEmpty() || pwd.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        if (!id.matches("^\\d*$")) {
-            JOptionPane.showMessageDialog(this, "Account ID must be numeric", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         Request req = new Request();
         req.setAction("userLogin");
-        req.setAttribute("id", id);
+        req.setAttribute("account", account);
         req.setAttribute("password", pwd);
 
         try {

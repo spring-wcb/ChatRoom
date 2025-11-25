@@ -9,12 +9,11 @@ import common.model.entity.User;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class ModernRegisterFrame extends JFrame {
     private static final long serialVersionUID = 1L;
+    private JTextField accountField;
     private JTextField nicknameField;
     private JPasswordField pwdField;
     private JPasswordField confirmPwdField;
@@ -30,7 +29,7 @@ public class ModernRegisterFrame extends JFrame {
 
     private void initUI() {
         setTitle("SpringChat Register");
-        setSize(500, 650);
+        setSize(500, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -73,7 +72,7 @@ public class ModernRegisterFrame extends JFrame {
         add(mainPanel);
 
         JPanel cardPanel = new JPanel();
-        cardPanel.setPreferredSize(new Dimension(420, 580));
+        cardPanel.setPreferredSize(new Dimension(420, 630));
         cardPanel.setBackground(Color.WHITE);
         cardPanel.setLayout(null);
         cardPanel.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
@@ -84,28 +83,32 @@ public class ModernRegisterFrame extends JFrame {
         titleLabel.setBounds(40, 20, 340, 30);
         cardPanel.add(titleLabel);
 
+        // Account
+        addLabel(cardPanel, "Account (Unique)", 70);
+        accountField = addTextField(cardPanel, 95);
+
         // Nickname
-        addLabel(cardPanel, "Nickname", 70);
-        nicknameField = addTextField(cardPanel, 95);
+        addLabel(cardPanel, "Nickname", 145);
+        nicknameField = addTextField(cardPanel, 170);
 
         // Password
-        addLabel(cardPanel, "Password", 145);
-        pwdField = addPasswordField(cardPanel, 170);
+        addLabel(cardPanel, "Password", 220);
+        pwdField = addPasswordField(cardPanel, 245);
 
         // Confirm Password
-        addLabel(cardPanel, "Confirm Password", 220);
-        confirmPwdField = addPasswordField(cardPanel, 245);
+        addLabel(cardPanel, "Confirm Password", 295);
+        confirmPwdField = addPasswordField(cardPanel, 320);
 
         // Gender
-        addLabel(cardPanel, "Gender", 295);
+        addLabel(cardPanel, "Gender", 370);
         genderCombo = new JComboBox<>(new String[] { "M", "F" });
         genderCombo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         genderCombo.setBackground(Color.WHITE);
-        genderCombo.setBounds(40, 320, 340, 35);
+        genderCombo.setBounds(40, 395, 340, 35);
         cardPanel.add(genderCombo);
 
         // Avatar
-        addLabel(cardPanel, "Select Avatar", 370);
+        addLabel(cardPanel, "Select Avatar", 445);
         Integer[] heads = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
         headCombo = new JComboBox<>(heads);
         headCombo.setRenderer(new DefaultListCellRenderer() {
@@ -114,12 +117,15 @@ public class ModernRegisterFrame extends JFrame {
                     boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
                         cellHasFocus);
-                label.setIcon(new ImageIcon("images/" + value + ".png"));
+                ImageIcon originalIcon = new ImageIcon("images/" + value + ".png");
+                // Scale image to fit combo box height while maintaining aspect ratio
+                Image scaledImage = originalIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+                label.setIcon(new ImageIcon(scaledImage));
                 label.setText(" Avatar " + value);
                 return label;
             }
         });
-        headCombo.setBounds(40, 395, 340, 50);
+        headCombo.setBounds(40, 470, 340, 50);
         cardPanel.add(headCombo);
 
         // Register Button
@@ -127,7 +133,7 @@ public class ModernRegisterFrame extends JFrame {
         registerBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
         registerBtn.setForeground(Color.WHITE);
         registerBtn.setBackground(primaryColor);
-        registerBtn.setBounds(40, 480, 340, 45);
+        registerBtn.setBounds(40, 555, 340, 45);
         registerBtn.setFocusPainted(false);
         registerBtn.setBorderPainted(false);
         registerBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -168,11 +174,12 @@ public class ModernRegisterFrame extends JFrame {
     }
 
     private void register() {
+        String account = accountField.getText().trim();
         String nickname = nicknameField.getText().trim();
         String pwd = new String(pwdField.getPassword());
         String confirmPwd = new String(confirmPwdField.getPassword());
 
-        if (nickname.isEmpty() || pwd.isEmpty()) {
+        if (account.isEmpty() || nickname.isEmpty() || pwd.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -180,8 +187,16 @@ public class ModernRegisterFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Passwords do not match", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        // Validate account format (alphanumeric, 3-20 characters)
+        if (!account.matches("^[a-zA-Z0-9_]{3,20}$")) {
+            JOptionPane.showMessageDialog(this, 
+                "Account must be 3-20 characters (letters, numbers, underscore only)", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        User user = new User(pwd, nickname, genderCombo.getSelectedItem().toString().charAt(0),
+        User user = new User(account, pwd, nickname, genderCombo.getSelectedItem().toString().charAt(0),
                 (Integer) headCombo.getSelectedItem());
         Request req = new Request();
         req.setAction("userRegister");
@@ -190,16 +205,22 @@ public class ModernRegisterFrame extends JFrame {
         try {
             Response response = ClientUtil.sendTextRequest(req);
             if (response.getStatus() == ResponseStatus.OK) {
-                User registeredUser = (User) response.getData("user");
-                JOptionPane.showMessageDialog(this,
-                        "Registration Successful!\nYour Account ID is: " + registeredUser.getId(),
-                        "Success", JOptionPane.INFORMATION_MESSAGE);
-                dispose();
+                String msg = (String) response.getData("msg");
+                if (msg != null) {
+                    JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    User registeredUser = (User) response.getData("user");
+                    JOptionPane.showMessageDialog(this,
+                            "Registration Successful!\nYour Account is: " + registeredUser.getAccount(),
+                            "Success", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Registration Failed", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (IOException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Connection Error", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

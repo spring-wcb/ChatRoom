@@ -52,7 +52,7 @@ public class RequestProcessor implements Runnable {
                 System.out.println("Server\u8bfb\u53d6\u4e86\u5ba2\u6237\u7aef\u7684\u8bf7\u6c42:" + request.getAction()); // Server读取了客户端的请求
 
                 String actionName = request.getAction();   //获取请求中的动作
-                if(actionName.equals("userRegiste")){      //用户注册
+                if(actionName.equals("userRegister")){      //用户注册
                     registe(currentClientIOCache, request);
                 }else if(actionName.equals("userLogin")){  //用户登录
                     login(currentClientIOCache, request);
@@ -134,36 +134,42 @@ public class RequestProcessor implements Runnable {
     public void registe(OnlineClientIOCache oio, Request request) throws IOException {
         User user = (User)request.getAttribute("user");
         UserService userService = new UserService();
-        userService.addUser(user);
+        boolean success = userService.addUser(user);
 
         Response response = new Response();  //创建一个响应对象
         response.setStatus(ResponseStatus.OK);
-        response.setData("user", user);
+        
+        if(success){
+            response.setData("user", user);
+            
+            //把新注册用户添加到RegistedUserTableModel中
+            DataBuffer.registedUserTableModel.add(new String[]{
+                    String.valueOf(user.getId()),
+                    user.getAccount(),
+                    user.getPassword(),
+                    user.getNickname(),
+                    String.valueOf(user.getSex())
+            });
+        } else {
+            response.setData("msg", "Account already exists!");
+        }
 
         oio.getOos().writeObject(response);  //把响应对象往客户端写
         oio.getOos().flush();
-
-        //把新注册用户添加到RegistedUserTableModel中
-        DataBuffer.registedUserTableModel.add(new String[]{
-                String.valueOf(user.getId()),
-                user.getPassword(),
-                user.getNickname(),
-                String.valueOf(user.getSex())
-        });
     }
 
     /** 登录 */
     public void login(OnlineClientIOCache currentClientIO, Request request) throws IOException {
-        String idStr = (String)request.getAttribute("id");
+        String account = (String)request.getAttribute("account");
         String password = (String) request.getAttribute("password");
         UserService userService = new UserService();
-        User user = userService.login(Long.parseLong(idStr), password);
+        User user = userService.login(account, password);
 
         Response response = new Response();  //创建一个响应对象
         if(null != user){
             if(DataBuffer.onlineUsersMap.containsKey(user.getId())){ //用户已经登录了
                 response.setStatus(ResponseStatus.OK);
-                response.setData("msg", "该 用户已经在别处上线了！");
+                response.setData("msg", "This account is already logged in elsewhere!");
                 currentClientIO.getOos().writeObject(response);  //把响应对象往客户端写
                 currentClientIO.getOos().flush();
             }else { //正确登录
@@ -190,12 +196,13 @@ public class RequestProcessor implements Runnable {
                 //把当前上线用户添加到OnlineUserTableModel中
                 DataBuffer.onlineUserTableModel.add(
                         new String[]{String.valueOf(user.getId()),
+                                user.getAccount(),
                                 user.getNickname(),
                                 String.valueOf(user.getSex())});
             }
         }else{ //登录失败
             response.setStatus(ResponseStatus.OK);
-            response.setData("msg", "账号或密码不正确！");
+            response.setData("msg", "Account or password incorrect!");
             currentClientIO.getOos().writeObject(response);
             currentClientIO.getOos().flush();
         }

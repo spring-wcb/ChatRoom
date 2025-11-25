@@ -8,11 +8,12 @@ A feature-rich, modern desktop chat application built with Java Swing, supportin
 ## 📋 Features
 
 ### Core Functionality
-- ✅ **User Registration & Login** - Secure user authentication
+- ✅ **User Registration & Login** - Account-based authentication with unique usernames
 - ✅ **Group Chat** - Public chat room for all online users
 - ✅ **Private Messaging** - One-on-one private conversations
 - ✅ **Real-time Updates** - Instant message delivery and user status updates
 - ✅ **Message Persistence** - Chat history saved locally in JSON format
+- ✅ **Account Management** - Unique usernames, duplicate prevention, avatar selection
 
 ### Interactive Features
 - ✅ **Emoji Support** - 60+ common emojis with picker panel
@@ -108,8 +109,8 @@ ChatRoom/
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/SpringChat.git
-cd SpringChat/ChatRoom
+git clone https://github.com/spring-wcb/ChatRoom.git
+cd ChatRoom
 ```
 
 2. **Configure IDE**
@@ -164,12 +165,21 @@ Right-click client/ClientMain.java → Run 'ClientMain.main()'
 java -cp "out/production/ChatRoom;lib/*" client.ClientMain
 ```
 
-**First-time users**: Register a new account
-**Returning users**: Login with existing credentials
+**First-time users**: Register a new account with unique username
+**Returning users**: Login with account username and password
+
+**Default Test Users** (created automatically on first server startup):
+
+| Account | Password | Nickname | Gender |
+|---------|----------|----------|--------|
+| 101     | 123      | Admin    | M      |
+| 102     | 123      | yong     | M      |
+| 103     | 123      | anni     | F      |
 
 #### 3. Test the Application
 
 - Start at least 2 clients to test messaging
+- Login with test accounts or register new ones
 - Try both group chat and private messages
 - Test file sharing, emoji, search features
 - Close and reopen to verify message persistence

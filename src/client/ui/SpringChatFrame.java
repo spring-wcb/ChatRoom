@@ -118,14 +118,6 @@ public class SpringChatFrame extends JFrame {
         JLabel myAvatar = new JLabel(getCircleIcon("images/" + DataBuffer.currentUser.getHead() + ".png", 40));
         leftHeader.add(myAvatar, BorderLayout.WEST);
 
-        // Icons Right
-        JPanel leftIcons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 5));
-        leftIcons.setOpaque(false);
-        leftIcons.add(createIconButton(new StatusIcon(), "Status"));
-        leftIcons.add(createIconButton(new NewChatIcon(), "New Chat"));
-        leftIcons.add(createIconButton(new MenuIcon(), "Menu"));
-        leftHeader.add(leftIcons, BorderLayout.EAST);
-
         leftPanel.add(leftHeader, BorderLayout.NORTH);
 
         // Search
